@@ -93,7 +93,7 @@ export function TwoWays() {
         <LeadParagraph tone="light">{paragraph}</LeadParagraph>
       </Reveal>
 
-      <ul className="mt-14 grid gap-6 md:mt-20 md:grid-cols-2">
+      <ul className="mt-14 grid items-start gap-6 md:mt-20 md:grid-cols-2 lg:[&>li:last-child]:mt-16">
         {cards.map((card, index) => (
           <Reveal key={card.label} as="li" index={index}>
             <Card card={card} />

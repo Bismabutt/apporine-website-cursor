@@ -6,7 +6,7 @@ import { Reveal } from "@/components/section/reveal";
 import { Section } from "@/components/section/section";
 import { SectionHeadline } from "@/components/section/section-headline";
 import { SegmentText } from "@/components/section/segment-text";
-import { displayClass, focusRingLight, lightBodyColour } from "@/components/section/tone";
+import { displayClass, focusRingLight, labelClass, lightBodyColour } from "@/components/section/tone";
 import { anchors, routes } from "@/lib/routes";
 import type { TextSegment } from "@/lib/text";
 import { CapabilityIconSvg, type CapabilityIcon } from "./capability-icons";
@@ -30,12 +30,10 @@ const invitation = {
   button: { label: "Start building", href: anchors.start },
 };
 
-const tile = "relative flex h-full min-h-[260px] flex-col rounded-[24px] p-8";
-
 /**
- * Section 7 (07-homepage-spec.md): five glass capability tiles and the
- * invitation tile. Each capability links to What we build, like the same
- * items in the navigation and footer; the whole tile is the link's hit area.
+ * Section 7 (07-homepage-spec.md): the five capabilities as a ledger, then the
+ * invitation. Each capability links to What we build, like the navigation and
+ * the footer. The whole row is the link's hit area.
  */
 export function WhatWeBuild() {
   return (
@@ -48,47 +46,46 @@ export function WhatWeBuild() {
         <LeadParagraph tone="light">{paragraph}</LeadParagraph>
       </Reveal>
 
-      <ul className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-14 border-t border-plum-200 md:mt-20">
         {capabilities.map((capability, index) => (
-          <Reveal key={capability.title} as="li" index={index}>
-            <div
-              data-cursor="card"
-              className={`${tile} group border border-plum-200 bg-[rgba(251,249,252,0.65)] backdrop-blur-[12px] transition-[translate,border-color] duration-240 ease-brand hover:-translate-y-1 hover:border-orchid has-focus-visible:border-orchid motion-reduce:hover:translate-y-0`}
-            >
+          <Reveal key={capability.title} as="li" index={index} className="border-b border-plum-200">
+            <div data-cursor="card" className="group relative grid gap-4 py-8 md:grid-cols-[4.5rem_auto_minmax(0,1fr)_auto] md:items-center md:gap-8 md:py-10">
+              <span className={`${labelClass} text-plum-600`}>{String(index + 1).padStart(2, "0")}</span>
               <CapabilityIconSvg icon={capability.icon} />
-              {/* Small arrow, top right, on hover. */}
+              <div>
+                <h3 className="font-sans text-[22px] leading-[1.3] font-semibold text-plum-800">
+                  <Link
+                    href={routes.build}
+                    prefetch={false}
+                    className={`rounded-sm after:absolute after:inset-0 after:content-[''] ${focusRingLight}`}
+                  >
+                    {capability.title}
+                  </Link>
+                </h3>
+                <p className={`mt-2 max-w-[36rem] font-sans text-base leading-[1.6] ${lightBodyColour}`}>{capability.body}</p>
+              </div>
               <span
                 aria-hidden="true"
-                className="absolute end-8 top-8 -translate-x-1 font-sans text-xl text-plum-800 opacity-0 transition-[opacity,translate] duration-240 ease-brand group-hover:translate-x-0 group-hover:opacity-100 group-has-focus-visible:translate-x-0 group-has-focus-visible:opacity-100 rtl:-scale-x-100"
+                className="-translate-x-1 font-sans text-xl text-plum-800 opacity-0 transition-[opacity,translate] duration-240 ease-brand group-hover:translate-x-0 group-hover:opacity-100 group-has-focus-visible:translate-x-0 group-has-focus-visible:opacity-100 rtl:-scale-x-100"
               >
                 →
               </span>
-              <h3 className="mt-auto pt-10 font-sans text-[22px] leading-[1.3] font-semibold text-plum-800">
-                <Link
-                  href={routes.build}
-                  prefetch={false}
-                  className={`rounded-sm after:absolute after:inset-0 after:rounded-[24px] after:content-[''] ${focusRingLight}`}
-                >
-                  {capability.title}
-                </Link>
-              </h3>
-              <p className={`mt-2 font-sans text-base leading-[1.6] ${lightBodyColour}`}>{capability.body}</p>
             </div>
           </Reveal>
         ))}
-
-        <Reveal as="li" index={capabilities.length}>
-          <div data-surface="dark" className={`${tile} items-start bg-plum-800 text-plum-50`}>
-            <h3 className={`${displayClass} text-[28px] leading-[0.95] text-plum-50`}>
-              <SegmentText segments={invitation.title} tone="dark" />
-            </h3>
-            <p className="mt-3 mb-8 font-sans text-base leading-[1.6] text-plum-50">{invitation.body}</p>
-            <ButtonLink href={invitation.button.href} variant="primary" className="mt-auto">
-              {invitation.button.label}
-            </ButtonLink>
-          </div>
-        </Reveal>
       </ul>
+
+      <Reveal className="mt-10">
+        <div data-surface="dark" className="flex flex-col items-start rounded-[28px] bg-plum-800 p-8 md:p-12">
+          <h3 className={`${displayClass} mb-4 max-w-[16ch] text-[clamp(32px,4vw,56px)] leading-[0.95] text-plum-50`}>
+            <SegmentText segments={invitation.title} tone="dark" />
+          </h3>
+          <p className="mb-8 max-w-[32rem] font-sans text-base leading-[1.6] text-plum-50">{invitation.body}</p>
+          <ButtonLink href={invitation.button.href} variant="primary">
+            {invitation.button.label}
+          </ButtonLink>
+        </div>
+      </Reveal>
     </Section>
   );
 }

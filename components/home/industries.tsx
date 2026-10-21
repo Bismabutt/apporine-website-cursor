@@ -6,17 +6,20 @@ import { useRef, useState } from "react";
 import { EASE_BRAND } from "@/components/hero/hero-motion";
 import { Chevron } from "@/components/nav/chevron";
 import { Eyebrow } from "@/components/section/eyebrow";
+import { Film } from "@/components/section/film";
 import { LeadParagraph } from "@/components/section/lead-paragraph";
 import { REDUCED_FADE_S, useReducedMotion } from "@/components/section/motion";
 import { Reveal } from "@/components/section/reveal";
 import { Section } from "@/components/section/section";
 import { SectionHeadline } from "@/components/section/section-headline";
+import { SilentQuestion } from "@/components/section/silent-question";
 import { displayClass, focusRing, labelClass } from "@/components/section/tone";
 import { routes } from "@/lib/routes";
 import type { TextSegment } from "@/lib/text";
 
 // Copy is locked: _brief/docs/08-homepage-content.md, section 8.
 const eyebrow = "INDUSTRIES";
+const question = "Do you understand my industry?";
 const headline: TextSegment[] = [
   { text: "We build for industries where one bad hour can cost " },
   { text: "millions.", accent: true },
@@ -31,13 +34,9 @@ type Industry = {
   problem: string;
   build: string;
   link: { label: string; href: string };
-  /** Panel visual; reuses the hero posters for now. */
-  poster: string;
+  /** Panel film in /public/videos. */
+  film: string;
 };
-
-const MONOLITH = "/videos/hero-01-monolith-poster.webp";
-const ARMILLARY = "/videos/hero-02-armillary-poster.webp";
-const BRIDGE = "/videos/hero-03-bridge-poster.webp";
 
 const industries: Industry[] = [
   {
@@ -46,7 +45,7 @@ const industries: Industry[] = [
     problem: "Payment outages, fraud and manual reviews that slow every transaction.",
     build: "Resilient payment operations, fraud intelligence and automated compliance workflows.",
     link: { label: "Explore financial services", href: routes.financialServices },
-    poster: MONOLITH,
+    film: "hero-01-monolith",
   },
   {
     id: "insurance",
@@ -54,7 +53,7 @@ const industries: Industry[] = [
     problem: "Slow claims, leakage and processes still built on paper.",
     build: "Claims automation, leakage detection and broker platforms.",
     link: { label: "Explore insurance", href: routes.insurance },
-    poster: BRIDGE,
+    film: "hero-03-bridge",
   },
   {
     id: "telecommunications",
@@ -62,7 +61,7 @@ const industries: Industry[] = [
     problem: "Network incidents that ripple out to millions of customers.",
     build: "Incident intelligence, self healing operations and customer platforms.",
     link: { label: "Explore telecommunications", href: routes.telecommunications },
-    poster: MONOLITH,
+    film: "hero-01-monolith",
   },
   {
     id: "energy-and-utilities",
@@ -70,7 +69,7 @@ const industries: Industry[] = [
     problem: "Ageing systems running grids that cannot fail.",
     build: "Grid operations software, asset monitoring and field apps.",
     link: { label: "Explore energy and utilities", href: routes.energyAndUtilities },
-    poster: ARMILLARY,
+    film: "hero-02-armillary",
   },
   {
     id: "logistics",
@@ -78,7 +77,7 @@ const industries: Industry[] = [
     problem: "Disconnected systems and delays that compound across the chain.",
     build: "Visibility platforms, routing intelligence and integration.",
     link: { label: "Explore logistics", href: routes.logistics },
-    poster: BRIDGE,
+    film: "hero-03-bridge",
   },
   {
     id: "retail-and-ecommerce",
@@ -86,13 +85,15 @@ const industries: Industry[] = [
     problem: "Stock gaps, abandoned checkouts and failures on peak days.",
     build: "Commerce platforms, demand forecasting and resilient checkout.",
     link: { label: "Explore retail and ecommerce", href: routes.retailAndEcommerce },
-    poster: ARMILLARY,
+    film: "hero-02-armillary",
   },
 ];
 
-/** Darkens the poster so the blocks at the bottom read clearly. */
-const PANEL_SCRIM =
-  "linear-gradient(0deg, rgba(18,4,26,0.94) 0%, rgba(18,4,26,0.78) 38%, rgba(18,4,26,0.25) 75%, rgba(18,4,26,0.1) 100%)";
+/** Darkens the film so the names on the left and the blocks at the bottom hold contrast. */
+const STAGE_SCRIM = [
+  "linear-gradient(90deg, rgba(18,4,26,0.94) 0%, rgba(18,4,26,0.88) 40%, rgba(18,4,26,0.62) 100%)",
+  "linear-gradient(0deg, rgba(18,4,26,0.9) 0%, rgba(18,4,26,0.28) 52%)",
+].join(", ");
 
 const SWITCH_S = 0.3;
 
@@ -147,8 +148,23 @@ function IndustryTabs() {
   }
 
   return (
-    <div className="hidden lg:grid lg:grid-cols-12 lg:gap-12">
-      <div role="tablist" aria-label="Industries" aria-orientation="vertical" className="col-span-5 flex flex-col items-start gap-2">
+    <div className="relative hidden min-h-[720px] overflow-hidden rounded-[28px] bg-plum-900 lg:block">
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={industry.id}
+          initial={reducedMotion ? { opacity: 0 } : { opacity: 0, filter: "blur(10px)" }}
+          animate={reducedMotion ? { opacity: 1 } : { opacity: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: reducedMotion ? REDUCED_FADE_S : SWITCH_S, ease: EASE_BRAND }}
+          className="absolute inset-0"
+        >
+          <Film name={industry.film} />
+          <div aria-hidden="true" className="absolute inset-0" style={{ backgroundImage: STAGE_SCRIM }} />
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="relative z-10 grid min-h-[720px] grid-cols-12 gap-12 p-10 xl:p-14">
+      <div role="tablist" aria-label="Industries" aria-orientation="vertical" className="col-span-5 flex flex-col items-start justify-center gap-2">
         {industries.map((item, index) => {
           const selected = index === active;
           return (
@@ -192,27 +208,12 @@ function IndustryTabs() {
         })}
       </div>
 
-      <div
-        id="industry-panel"
-        role="tabpanel"
-        aria-labelledby={`industry-tab-${industry.id}`}
-        className="relative col-span-7 h-[520px] overflow-hidden rounded-[28px] bg-plum-900"
-      >
-        <AnimatePresence initial={false}>
-          <motion.div
-            key={industry.id}
-            initial={reducedMotion ? { opacity: 0 } : { opacity: 0, filter: "blur(10px)" }}
-            animate={reducedMotion ? { opacity: 1 } : { opacity: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: reducedMotion ? REDUCED_FADE_S : SWITCH_S, ease: EASE_BRAND }}
-            className="absolute inset-0 flex flex-col justify-end p-10"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element -- decorative poster, already web optimised */}
-            <img src={industry.poster} alt="" loading="lazy" decoding="async" className="absolute inset-0 -z-20 size-full object-cover" />
-            <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ backgroundImage: PANEL_SCRIM }} />
-            <Details industry={industry} />
-          </motion.div>
-        </AnimatePresence>
+      <div id="industry-panel" role="tabpanel" aria-labelledby={`industry-tab-${industry.id}`} className="col-span-7 flex flex-col justify-end">
+        <div key={industry.id} className={reducedMotion ? undefined : "industry-fade"}>
+          <p className={`${labelClass} mb-4 text-citrine`}>{String(active + 1).padStart(2, "0")}</p>
+          <Details industry={industry} />
+        </div>
+      </div>
       </div>
     </div>
   );
@@ -277,7 +278,10 @@ export function Industries() {
   return (
     <Section labelledBy="industries-title" background="bg-plum-950" surface="dark">
       <Reveal>
-        <Eyebrow tone="dark">{eyebrow}</Eyebrow>
+        <Eyebrow tone="dark" className="mb-4">
+          {eyebrow}
+        </Eyebrow>
+        <SilentQuestion tone="dark">{question}</SilentQuestion>
       </Reveal>
       <SectionHeadline id="industries-title" tone="dark" segments={headline} />
       <Reveal>

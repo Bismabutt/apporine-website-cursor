@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { gutter } from "@/components/layout";
 import { Eyebrow } from "@/components/section/eyebrow";
@@ -27,7 +28,7 @@ export function storyMetadata(path: RoutePath): Metadata {
  * "Latest from Apporine" card: the card's film as a 70vh banner, then a note
  * on Ivory. Content comes from lib/latest.ts.
  */
-export function StoryPage({ path }: { path: RoutePath }) {
+export function StoryPage({ path, children }: { path: RoutePath; children?: ReactNode }) {
   const story = storyFor(path);
 
   return (
@@ -59,24 +60,26 @@ export function StoryPage({ path }: { path: RoutePath }) {
         </div>
       </section>
 
-      <section data-surface="light" className="bg-ivory px-6 py-[clamp(72px,8vw,128px)]">
-        <div className="mx-auto max-w-[44rem]">
-          <p className={`mb-8 font-sans text-lg leading-[1.6] ${lightBodyColour}`}>{note}</p>
-          <ul className="flex flex-wrap gap-x-8 gap-y-3">
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  prefetch={false}
-                  className={`inline-block rounded-sm font-sans text-[15px] font-semibold text-plum-800 underline decoration-plum-200 underline-offset-4 transition-colors duration-240 ease-brand hover:decoration-orchid ${focusRingLight}`}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {children ?? (
+        <section data-surface="light" className="bg-ivory px-6 py-[clamp(72px,8vw,128px)]">
+          <div className="mx-auto max-w-[44rem]">
+            <p className={`mb-8 font-sans text-lg leading-[1.6] ${lightBodyColour}`}>{note}</p>
+            <ul className="flex flex-wrap gap-x-8 gap-y-3">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    prefetch={false}
+                    className={`inline-block rounded-sm font-sans text-[15px] font-semibold text-plum-800 underline decoration-plum-200 underline-offset-4 transition-colors duration-240 ease-brand hover:decoration-orchid ${focusRingLight}`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

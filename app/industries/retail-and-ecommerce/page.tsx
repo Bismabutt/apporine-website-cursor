@@ -1,6 +1,12 @@
-import { ComingSoon, comingSoonMetadata } from "@/components/coming-soon";
+import { IndustryView } from "@/components/pages/industry-view";
+import { industryByPath } from "@/lib/industry-pages";
+import { pageMetadata } from "@/lib/page-meta";
 import { routes } from "@/lib/routes";
 
-export const metadata = comingSoonMetadata(routes.retailAndEcommerce);
+const industry = industryByPath(routes.retailAndEcommerce);
 
-export default ComingSoon;
+export const metadata = pageMetadata(industry.name, industry.problem);
+
+export default function Page() {
+  return <IndustryView industry={industry} />;
+}

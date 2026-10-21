@@ -3,7 +3,8 @@ import Link from "next/link";
 type ButtonLinkProps = {
   href: string;
   children: string;
-  variant: "primary" | "secondary";
+  /** `primaryOnLight` is the plum button with citrine text, for Pearl and Ivory. */
+  variant: "primary" | "secondary" | "primaryOnLight";
   size?: "default" | "nav" | "card";
   className?: string;
   onClick?: () => void;
@@ -12,11 +13,12 @@ type ButtonLinkProps = {
 const base =
   "group inline-flex shrink-0 items-center justify-center gap-2 rounded-pill font-sans font-semibold tracking-[0.01em] whitespace-nowrap " +
   "transition-[background-color,border-color,scale] duration-(--dur-micro) ease-brand active:scale-[0.98] " +
-  "focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-citrine";
+  "focus-visible:outline-3 focus-visible:outline-offset-3";
 
 const variants = {
-  primary: "bg-citrine text-plum-800 hover:bg-citrine-hover active:bg-citrine-pressed",
-  secondary: "border border-plum-600 text-plum-50 hover:border-plum-300",
+  primary: "bg-citrine text-plum-800 hover:bg-citrine-hover active:bg-citrine-pressed focus-visible:outline-citrine",
+  secondary: "border border-plum-600 text-plum-50 hover:border-plum-300 focus-visible:outline-citrine",
+  primaryOnLight: "bg-plum-800 text-citrine hover:bg-plum-700 active:bg-plum-900 focus-visible:outline-orchid-deep",
 };
 
 const sizes = {
@@ -49,7 +51,7 @@ export function ButtonLink({
       className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {children}
-      {variant === "primary" && (
+      {variant !== "secondary" && (
         <span
           aria-hidden="true"
           className="inline-block transition-transform duration-[180ms] ease-brand group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1"
