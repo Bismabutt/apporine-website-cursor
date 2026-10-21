@@ -4,17 +4,18 @@ import { LeadParagraph } from "@/components/section/lead-paragraph";
 import { Reveal } from "@/components/section/reveal";
 import { Section } from "@/components/section/section";
 import { SectionHeadline } from "@/components/section/section-headline";
-import { labelClass } from "@/components/section/tone";
+import { SilentQuestion } from "@/components/section/silent-question";
+import { AssuranceTable } from "@/components/trust/assurance-table";
+import { principles, type PrincipleId } from "@/lib/principles";
 import { contactTopics, routes } from "@/lib/routes";
-import { assurance, type AssuranceStatus } from "@/lib/site";
 import type { TextSegment } from "@/lib/text";
 
 // Copy is locked: _brief/docs/08-homepage-content.md, section 9.
 const eyebrow = "TRUST AND SECURITY";
+const question = "Can I trust you with my data?";
 const headline: TextSegment[] = [{ text: "Built to be " }, { text: "examined.", accent: true }];
 const paragraph =
   "Enterprises trust what they can verify. So we design for scrutiny from day one: clear controls, honest status and evidence on request.";
-const roadmapLabel = "OUR ASSURANCE ROADMAP";
 
 /** Small citrine line icons, 24px. Decorative. */
 const principleIcons = {
@@ -43,44 +44,26 @@ const principleIcons = {
   ),
 };
 
-const principles: { icon: keyof typeof principleIcons; title: string; body: string }[] = [
-  {
-    icon: "security",
-    title: "Security by design",
-    body: "Threat modelling, least privilege access and encryption in transit and at rest.",
-  },
-  {
-    icon: "data",
-    title: "Your data stays yours",
-    body: "We collect only what we need, and client data is never used to train shared models.",
-  },
-  {
-    icon: "control",
-    title: "Humans stay in control",
-    body: "Our AI acts only within the approvals you define, and every action is recorded.",
-  },
-  {
-    icon: "transparent",
-    title: "Transparent by default",
-    body: "Policies, security questionnaires and evidence shared under NDA.",
-  },
-];
-
-const statusStyles: Record<AssuranceStatus, string> = {
-  "In place": "bg-citrine text-plum-800 border-citrine",
-  "In progress": "border-citrine text-citrine",
-  Planned: "border-plum-400 text-plum-300",
-};
-
-function StatusPill({ status }: { status: AssuranceStatus }) {
+function PrincipleIcon({ id }: { id: PrincipleId }) {
   return (
-    <span
-      className={`inline-flex h-7 items-center rounded-pill border px-3 font-mono text-[11px] font-medium tracking-[0.08em] whitespace-nowrap uppercase ${statusStyles[status]}`}
+    <svg
+      viewBox="0 0 24 24"
+      width="24"
+      height="24"
+      fill="none"
+      stroke="var(--citrine)"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
     >
-      {status}
-    </span>
+      {principleIcons[id]}
+    </svg>
   );
 }
+
+const card = "rounded-[24px] border border-[rgba(165,59,239,0.3)] bg-[rgba(18,4,26,0.45)] p-8";
 
 /**
  * Section 9 (07-homepage-spec.md): four principles and the assurance roadmap,
@@ -94,70 +77,42 @@ export function Trust() {
       <div aria-hidden="true" className="blueprint-scan" />
 
       <Reveal>
-        <Eyebrow tone="dark">{eyebrow}</Eyebrow>
+        <Eyebrow tone="dark" className="mb-4">
+          {eyebrow}
+        </Eyebrow>
+        <SilentQuestion tone="dark">{question}</SilentQuestion>
       </Reveal>
       <SectionHeadline id="trust-title" tone="dark" segments={headline} />
       <Reveal>
         <LeadParagraph tone="dark">{paragraph}</LeadParagraph>
       </Reveal>
 
-      <ul className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2">
-        {principles.map((principle, index) => (
-          <Reveal
-            key={principle.title}
-            as="li"
-            index={index}
-            className="rounded-[24px] border border-[rgba(165,59,239,0.3)] bg-[rgba(18,4,26,0.45)] p-8"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="24"
-              height="24"
-              fill="none"
-              stroke="var(--citrine)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-              focusable="false"
-            >
-              {principleIcons[principle.icon]}
-            </svg>
-            <h3 className="mt-8 font-sans text-[22px] leading-[1.3] font-semibold text-plum-50">{principle.title}</h3>
-            <p className="mt-2 font-sans text-base leading-[1.6] text-plum-300">{principle.body}</p>
+      {principles
+        .filter((principle) => principle.id === "data")
+        .map((principle) => (
+          <Reveal key={principle.id} className={`mt-14 md:mt-20 ${card}`}>
+            <PrincipleIcon id={principle.id} />
+            <h3 className="mt-8 font-display text-[clamp(32px,4vw,56px)] leading-[0.95] font-extrabold tracking-[-0.015em] text-plum-50 uppercase [font-variation-settings:'wdth'_75,'opsz'_96]">
+              {principle.title}
+            </h3>
+            <p className="mt-4 max-w-[40rem] font-sans text-[clamp(17px,1.35vw,20px)] leading-[1.6] text-plum-50">{principle.body}</p>
           </Reveal>
         ))}
+
+      <ul className="mt-4 grid gap-4 lg:grid-cols-3">
+        {principles
+          .filter((principle) => principle.id !== "data")
+          .map((principle, index) => (
+            <Reveal key={principle.id} as="li" index={index} className={card}>
+              <PrincipleIcon id={principle.id} />
+              <h3 className="mt-8 font-sans text-[22px] leading-[1.3] font-semibold text-plum-50">{principle.title}</h3>
+              <p className="mt-2 font-sans text-base leading-[1.6] text-plum-300">{principle.body}</p>
+            </Reveal>
+          ))}
       </ul>
 
       <Reveal className="mt-16 md:mt-24">
-        <h3 id="assurance-roadmap" className={`${labelClass} mb-6 text-plum-300`}>
-          {roadmapLabel}
-        </h3>
-        <table aria-labelledby="assurance-roadmap" className="w-full border-collapse text-start">
-          <thead className="sr-only">
-            <tr>
-              <th scope="col">Item</th>
-              <th scope="col">What it means</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody className="border-t border-plum-600">
-            {assurance.map((row) => (
-              <tr
-                key={row.item}
-                className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-1 border-b border-plum-600 py-5 md:table-row md:py-0"
-              >
-                <th scope="row" className="text-start font-sans text-lg font-semibold text-plum-50 md:w-[30%] md:py-5 md:pe-6">
-                  {row.item}
-                </th>
-                <td className="col-start-1 row-start-2 font-sans text-base leading-[1.5] text-plum-300 md:py-5 md:pe-6">{row.meaning}</td>
-                <td className="col-start-2 row-span-2 row-start-1 self-center text-end md:py-5">
-                  <StatusPill status={row.status} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <AssuranceTable />
       </Reveal>
 
       <Reveal className="mt-12 flex flex-col gap-3 md:flex-row md:flex-wrap">

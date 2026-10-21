@@ -1,17 +1,29 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Eyebrow } from "@/components/section/eyebrow";
 import { LeadParagraph } from "@/components/section/lead-paragraph";
 import { Reveal } from "@/components/section/reveal";
 import { Section } from "@/components/section/section";
 import { SectionHeadline } from "@/components/section/section-headline";
+import { SilentQuestion } from "@/components/section/silent-question";
 import { displayClass, focusRingLight, labelClass, lightBodyColour } from "@/components/section/tone";
+import { routes } from "@/lib/routes";
 import { founderQuote, people, type Person } from "@/lib/site";
 import type { TextSegment } from "@/lib/text";
 
 // Copy is locked: _brief/docs/08-homepage-content.md, section 10.
 const eyebrow = "THE PEOPLE BEHIND APPORINE";
+const question = "Who has worked with you?";
 const headline: TextSegment[] = [{ text: "Accountable people. Not a faceless " }, { text: "vendor.", accent: true }];
 const paragraph = "You will always know who is building your product, and who answers for it.";
+const position =
+  "A logo wall is easy to borrow. We will not publish a client until that organisation has asked us to. Until then, the proof is the person who answers, the product that carries our name, and the evidence we share under NDA.";
+
+const proof = [
+  { label: "THE PERSON", title: "Bisma Idrees", line: "Founder. Named, and accountable for the standard.", href: routes.leadership },
+  { label: "THE PRODUCT", title: "Relyxus", line: "AI incident response that carries our name. Orion follows, in development.", href: routes.relyxus },
+  { label: "THE EVIDENCE", title: "On request", line: "Policies, questionnaires and a security pack, shared under NDA.", href: routes.trust },
+];
 
 function initials(name: string): string {
   return name
@@ -77,12 +89,32 @@ export function People() {
   return (
     <Section labelledBy="people-title" background="bg-plum-50" surface="light">
       <Reveal>
-        <Eyebrow tone="light">{eyebrow}</Eyebrow>
+        <Eyebrow tone="light" className="mb-4">
+          {eyebrow}
+        </Eyebrow>
+        <SilentQuestion tone="light">{question}</SilentQuestion>
       </Reveal>
       <SectionHeadline id="people-title" tone="light" segments={headline} />
       <Reveal>
         <LeadParagraph tone="light">{paragraph}</LeadParagraph>
+        <p className={`mt-6 max-w-[40rem] font-sans text-base leading-[1.6] ${lightBodyColour}`}>{position}</p>
       </Reveal>
+
+      <ul className="mt-14 grid gap-4 md:mt-16 md:grid-cols-3">
+        {proof.map((item, index) => (
+          <Reveal key={item.label} as="li" index={index}>
+            <Link
+              href={item.href}
+              prefetch={false}
+              className={`group block h-full rounded-[24px] border border-plum-200 bg-plum-50 p-8 transition-[translate,border-color] duration-240 ease-brand hover:-translate-y-1 hover:border-orchid motion-reduce:hover:translate-y-0 ${focusRingLight}`}
+            >
+              <p className={`${labelClass} mb-6 text-plum-600`}>{item.label}</p>
+              <p className="font-sans text-[22px] leading-[1.3] font-semibold text-plum-800">{item.title}</p>
+              <p className={`mt-3 font-sans text-base leading-[1.6] ${lightBodyColour}`}>{item.line}</p>
+            </Link>
+          </Reveal>
+        ))}
+      </ul>
 
       {shown.length > 0 && (
         <ul className="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2 md:mt-20 lg:grid-cols-4">

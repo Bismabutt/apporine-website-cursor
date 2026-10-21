@@ -56,28 +56,5 @@ export const contactTopics = {
  * coming soon template with "<name> · Apporine" as its title. When a page is
  * built, replace that file and remove its entry here.
  */
-export const comingSoonPages: { path: RoutePath; name: string }[] = [
-  { path: routes.products, name: "Products" },
-  { path: routes.build, name: "What we build" },
-  { path: routes.industries, name: "Industries" },
-  { path: routes.financialServices, name: "Financial services" },
-  { path: routes.insurance, name: "Insurance" },
-  { path: routes.telecommunications, name: "Telecommunications" },
-  { path: routes.energyAndUtilities, name: "Energy and utilities" },
-  { path: routes.logistics, name: "Logistics" },
-  { path: routes.retailAndEcommerce, name: "Retail and ecommerce" },
-  { path: routes.insights, name: "Insights" },
-  { path: routes.engineeringNotes, name: "Engineering notes" },
-  { path: routes.aiInProduction, name: "AI in production" },
-  { path: routes.operationalResilience, name: "Operational resilience" },
-  { path: routes.industryPerspectives, name: "Industry perspectives" },
-  { path: routes.company, name: "Company" },
-  { path: routes.leadership, name: "Leadership" },
-  { path: routes.press, name: "Press" },
-  { path: routes.contact, name: "Contact" },
-  { path: routes.security, name: "Security" },
-  { path: routes.privacy, name: "Privacy" },
-  { path: routes.cookies, name: "Cookies" },
-  { path: routes.terms, name: "Terms" },
-  { path: routes.accessibility, name: "Accessibility" },
-];
+/** Pages still on the coming soon template. Empty once a route has a real page. */
+export const comingSoonPages: { path: RoutePath; name: string }[] = [];

@@ -2,39 +2,28 @@
 
 import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { gutter } from "@/components/layout";
 import { Eyebrow } from "@/components/section/eyebrow";
 import { LeadParagraph } from "@/components/section/lead-paragraph";
 import { Reveal } from "@/components/section/reveal";
 import { sectionPadding } from "@/components/section/section";
 import { SectionHeadline } from "@/components/section/section-headline";
-import { lightBodyColour } from "@/components/section/tone";
+import { SilentQuestion } from "@/components/section/silent-question";
+import { focusRing, labelClass, lightBodyColour } from "@/components/section/tone";
+import { methodSteps } from "@/lib/method";
+import { principles } from "@/lib/principles";
+import { routes } from "@/lib/routes";
 import { useMediaQuery } from "@/lib/use-browser-state";
 import type { TextSegment } from "@/lib/text";
 
 // Copy is locked: _brief/docs/08-homepage-content.md, section 6.
 const eyebrow = "HOW WE BUILD";
+const question = "How do you work, and is it safe?";
 const headline: TextSegment[] = [{ text: "Four steps. No " }, { text: "shortcuts.", accent: true }];
 const paragraph = "The same discipline behind our own products, applied to yours.";
 
-const steps = [
-  {
-    title: "Find the cost",
-    body: "We start where your business loses the most, in money, time or trust. If we cannot measure the problem, we do not build.",
-  },
-  {
-    title: "Design it pristine",
-    body: "Architecture, security and experience are designed together, before a single line of code.",
-  },
-  {
-    title: "Build and prove",
-    body: "Short cycles, working software at every step, and results measured against the cost we found.",
-  },
-  {
-    title: "Run and improve",
-    body: "We stay accountable after launch, keeping it fast, secure and getting better.",
-  },
-];
+const steps = methodSteps;
 
 /** Pinned from 1024px when motion is allowed (lg:motion-safe:); otherwise a static list. */
 const PINNED_QUERY = "(min-width: 1024px) and (prefers-reduced-motion: no-preference)";
@@ -122,12 +111,16 @@ export function HowWeBuild() {
   });
 
   return (
+    <>
     <section ref={sectionRef} aria-labelledby="how-we-build-title" data-surface="light" className="relative isolate bg-plum-50 lg:motion-safe:h-[300vh]">
       <div className="lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:flex lg:motion-safe:h-screen lg:motion-safe:items-center">
         <div className={`${gutter} ${sectionPadding} grid gap-14 lg:grid-cols-12 lg:gap-12 lg:motion-safe:py-0`}>
           <div className="lg:col-span-5">
             <Reveal>
-              <Eyebrow tone="light">{eyebrow}</Eyebrow>
+              <Eyebrow tone="light" className="mb-4">
+                {eyebrow}
+              </Eyebrow>
+              <SilentQuestion tone="light">{question}</SilentQuestion>
             </Reveal>
             <SectionHeadline id="how-we-build-title" tone="light" segments={headline} className="mb-7 text-[clamp(40px,5.6vw,84px)] leading-[0.92]" />
             <Reveal>
@@ -148,6 +141,40 @@ export function HowWeBuild() {
             ))}
           </ol>
         </div>
+      </div>
+    </section>
+    <SafetyBand />
+    </>
+  );
+}
+
+/** The second half of the question: safety is a design step, stated in the locked principles. */
+function SafetyBand() {
+  const shown = principles.filter((principle) => principle.id === "security" || principle.id === "control");
+  return (
+    <section aria-label="Is it safe" data-surface="dark" className="bg-plum-900">
+      <div className={`${gutter} ${sectionPadding}`}>
+        <Reveal>
+          <p className={`${labelClass} mb-10 text-plum-300`}>IS IT SAFE</p>
+        </Reveal>
+        <ul className="grid gap-10 md:grid-cols-2 md:gap-16">
+          {shown.map((principle, index) => (
+            <Reveal key={principle.id} as="li" index={index}>
+              <h3 className="mb-3 font-sans text-[22px] leading-[1.3] font-semibold text-plum-50">{principle.title}</h3>
+              <p className="max-w-[34rem] font-sans text-base leading-[1.6] text-plum-300">{principle.body}</p>
+            </Reveal>
+          ))}
+        </ul>
+        <Reveal className="mt-12">
+          <Link
+            href={routes.trust}
+            prefetch={false}
+            className={`inline-flex items-center gap-2 rounded-sm font-sans text-[15px] font-semibold text-citrine ${focusRing}`}
+          >
+            Visit the Trust centre
+            <span aria-hidden="true">→</span>
+          </Link>
+        </Reveal>
       </div>
     </section>
   );

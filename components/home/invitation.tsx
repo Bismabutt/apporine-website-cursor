@@ -7,11 +7,13 @@ import { LeadParagraph } from "@/components/section/lead-paragraph";
 import { Reveal } from "@/components/section/reveal";
 import { deferredRendering, sectionPadding } from "@/components/section/section";
 import { SectionHeadline } from "@/components/section/section-headline";
+import { SilentQuestion } from "@/components/section/silent-question";
 import { anchors, routes } from "@/lib/routes";
 import type { TextSegment } from "@/lib/text";
 
 // Copy is locked: _brief/docs/08-homepage-content.md, section 12.
 const eyebrow = "START BUILDING";
+const question = "What do I do next?";
 const headline: TextSegment[] = [{ text: "Bring us the problem that costs you " }, { text: "most.", accent: true }];
 const paragraph =
   "Tell us where your business loses money, time or trust. We will show you what we would build, and how we would prove it.";
@@ -46,7 +48,12 @@ export function Invitation() {
 
       <div className={`${gutter} ${sectionPadding}`}>
         <Reveal>
-          <Eyebrow tone="dark">{eyebrow}</Eyebrow>
+          <Eyebrow tone="dark" onFilm className="mb-4">
+            {eyebrow}
+          </Eyebrow>
+          <SilentQuestion tone="dark" className={`mb-6 ${SOFT_TEXT_SHADOW}`}>
+            {question}
+          </SilentQuestion>
         </Reveal>
         <SectionHeadline
           id="invitation-title"
